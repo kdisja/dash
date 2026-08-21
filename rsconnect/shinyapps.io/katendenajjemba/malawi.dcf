@@ -1,0 +1,10 @@
+name: malawi
+title:
+username: katendenajjemba
+account: katendenajjemba
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 17718657
+bundleId:
+url: https://katendenajjemba.shinyapps.io/malawi/
+version: 1
