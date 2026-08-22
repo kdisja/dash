@@ -9,6 +9,8 @@
 # 1. LOAD PACKAGES
 # ==============================================================================
 
+
+library(rsconnect)
 library(shiny)
 library(tidyverse)
 library(ggplot2)
@@ -479,22 +481,7 @@ ui <- page_sidebar(
     ),
     
     # ==========================================================================
-    # TAB 3: CLUSTER SUMMARY
-    # ==========================================================================
-    
-    nav_panel(
-      
-      "Cluster summary",
-      
-      br(),
-      
-      DTOutput(
-        "cluster_table"
-      )
-    ),
-    
-    # ==========================================================================
-    # TAB 4: COVERAGE CATEGORY DISTRIBUTION
+    # TAB 3: COVERAGE CATEGORY DISTRIBUTION
     # ==========================================================================
     
     nav_panel(
@@ -514,6 +501,21 @@ ui <- page_sidebar(
       plotOutput(
         "coverage_category_plot",
         height = "620px"
+      )
+    ),
+    
+    # ==========================================================================
+    # TAB 4: CLUSTER SUMMARY
+    # ==========================================================================
+    
+    nav_panel(
+      
+      "Cluster summary",
+      
+      br(),
+      
+      DTOutput(
+        "cluster_table"
       )
     )
   )
