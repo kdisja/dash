@@ -534,6 +534,164 @@ server <- function(
   
   
   # =============================================================================
+  # HIGHLIGHT SELECTED CLUSTER ON MAP
+  # =============================================================================
+  
+  # Draws (or clears) a halo ring around the cluster chosen in the
+  # "Cluster" dropdown, so it stands out from its neighbours.
+  
+  update_cluster_highlight <- function() {
+    
+    proxy <- leafletProxy(
+      "cluster_map"
+    )
+    
+    
+    proxy %>%
+      removeMarker(
+        layerId = "highlighted_cluster"
+      )
+    
+    
+    if (
+      is.null(
+        input$cluster
+      ) ||
+      input$cluster ==
+      "All clusters"
+    ) {
+      
+      return(
+        invisible(
+          NULL
+        )
+      )
+    }
+    
+    
+    selected_cluster <-
+      cluster_map_data %>%
+      
+      filter(
+        cluster_id ==
+          input$cluster
+      )
+    
+    
+    if (
+      !is.null(
+        input$district
+      ) &&
+      input$district !=
+      "All districts"
+    ) {
+      
+      selected_cluster <-
+        selected_cluster %>%
+        
+        filter(
+          district ==
+            input$district
+        )
+    }
+    
+    
+    if (
+      !is.null(
+        input$healthcenter
+      ) &&
+      input$healthcenter !=
+      "All health centres"
+    ) {
+      
+      selected_cluster <-
+        selected_cluster %>%
+        
+        filter(
+          healthcenter ==
+            input$healthcenter
+        )
+    }
+    
+    
+    if (
+      !is.null(
+        input$coverage_range
+      )
+    ) {
+      
+      selected_cluster <-
+        selected_cluster %>%
+        
+        filter(
+          uptake >=
+            input$coverage_range[1],
+          uptake <=
+            input$coverage_range[2]
+        )
+    }
+    
+    
+    if (
+      nrow(
+        selected_cluster
+      ) == 0
+    ) {
+      
+      return(
+        invisible(
+          NULL
+        )
+      )
+    }
+    
+    
+    selected_cluster <-
+      selected_cluster %>%
+      slice(1)
+    
+    
+    proxy %>%
+      
+      addCircleMarkers(
+        
+        data = selected_cluster,
+        
+        lng = ~longitude,
+        
+        lat = ~latitude,
+        
+        layerId = "highlighted_cluster",
+        
+        radius = ~pmax(
+          6,
+          pmin(
+            12,
+            sqrt(
+              participants
+            )
+          )
+        ) + 7,
+        
+        color = "#0033ff",
+        
+        weight = 4,
+        
+        opacity = 1,
+        
+        fillColor = "#0033ff",
+        
+        fillOpacity = 0,
+        
+        options =
+          pathOptions(
+            interactive = FALSE
+          )
+      )
+  }
+  
+  
+  # =============================================================================
   # DISTRICT -> HEALTH CENTRE
   # =============================================================================
   
@@ -1801,6 +1959,8 @@ server <- function(
         "All clusters"
       ) {
         
+        update_cluster_highlight()
+        
         return()
       }
       
@@ -1867,6 +2027,8 @@ server <- function(
         ) == 0
       ) {
         
+        update_cluster_highlight()
+        
         return()
       }
       
@@ -1887,6 +2049,9 @@ server <- function(
             selected_cluster$latitude,
           zoom = 12
         )
+      
+      
+      update_cluster_highlight()
     }
   )
   
@@ -2121,6 +2286,9 @@ server <- function(
             )
         }
       }
+      
+      
+      update_cluster_highlight()
     },
     ignoreInit = TRUE
   )
@@ -2430,6 +2598,15 @@ server <- function(
         selected =
           "All villages"
       )
+      
+      
+      leafletProxy(
+        "cluster_map"
+      ) %>%
+        
+        removeMarker(
+          layerId = "highlighted_cluster"
+        )
       
       
       leafletProxy(
