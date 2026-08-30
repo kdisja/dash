@@ -28,11 +28,9 @@ library(htmltools)
 
 model_data <- read_csv("model_data.csv")
 
-rsconnect::setAccountInfo(name='katendenajjemba',
-                          token='9C2875E20F290AA2DF22369E10FECC53',
-                          secret='Pgmotd2zAci0HugkeFRhikWPbAvu8NqHe9fDlh64')
-
-
+# IMPORTANT: shinyapps.io credentials are not stored in this script.
+# Configure deployment credentials locally using rsconnect::setAccountInfo()
+# or the Posit/shinyapps.io account setup workflow before deploying.
 
 # ==============================================================================
 # 2. PREPARE INDIVIDUAL-LEVEL DATA
@@ -1596,7 +1594,11 @@ server <- function(
     ) %>%
       
       addProviderTiles(
-        providers$CartoDB.Positron
+        providers$Esri.WorldGrayCanvas,
+        options = providerTileOptions(
+          minZoom = 5,
+          maxZoom = 16
+        )
       ) %>%
       
       addCircleMarkers(
